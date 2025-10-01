@@ -3,9 +3,7 @@ package ru.orissemesterwork.api.user.model.entity;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import lombok.*;
 
-@Getter
-@Setter
-@Builder
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

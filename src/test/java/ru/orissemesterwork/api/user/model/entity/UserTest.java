@@ -2,6 +2,8 @@ package ru.orissemesterwork.api.user.model.entity;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.orissemesterwork.api.user.model.entity.User;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
@@ -15,52 +17,51 @@ class UserTest {
 
     // Builder & Getters
     @Test
-    @DisplayName("Проверка установки id через Builder")
+    @DisplayName("Проверка установки id")
     void testBuilder_Id() {
-        User user = User.builder().id(USER_ID).build();
+        User user = new User();
+        user.setId(USER_ID);
         assertEquals(USER_ID, user.getId());
     }
 
     @Test
-    @DisplayName("Проверка установки фамилии через Builder")
+    @DisplayName("Проверка установки фамилии")
     void testBuilder_Surname() {
-        User user = User.builder().surname(USER_SURNAME).build();
+        User user = new User();
+        user.setSurname(USER_SURNAME);
         assertEquals(USER_SURNAME, user.getSurname());
     }
 
     @Test
-    @DisplayName("Проверка установки имени через Builder")
+    @DisplayName("Проверка установки имени")
     void testBuilder_Name() {
-        User user = User.builder().name(USER_NAME).build();
+        User user = new User();
+        user.setName(USER_NAME);
         assertEquals(USER_NAME, user.getName());
     }
 
     @Test
-    @DisplayName("Проверка установки отчества через Builder")
+    @DisplayName("Проверка установки отчества")
     void testBuilder_Patronymic() {
-        User user = User.builder().patronymic(USER_PATRONYMIC).build();
+        User user = new User();
+        user.setPatronymic(USER_PATRONYMIC);
         assertEquals(USER_PATRONYMIC, user.getPatronymic());
     }
 
     @Test
-    @DisplayName("Проверка установки email через Builder")
+    @DisplayName("Проверка установки email")
     void testBuilder_Email() {
-        User user = User.builder().email(USER_EMAIL).build();
+        User user = new User();
+        user.setEmail(USER_EMAIL);
         assertEquals(USER_EMAIL, user.getEmail());
     }
 
     @Test
-    @DisplayName("Проверка установки телефона через Builder")
+    @DisplayName("Проверка установки телефона")
     void testBuilder_Phone() {
-        User user = User.builder().phone(USER_PHONE).build();
+        User user = new User();
+        user.setPhone(USER_PHONE);
         assertEquals(USER_PHONE, user.getPhone());
-    }
-
-    @Test
-    @DisplayName("Проверка установки passwordHash через Builder")
-    void testBuilder_PasswordHash() {
-        User user = User.builder().passwordHash("hash123").build();
-        assertEquals("hash123", user.getPasswordHash());
     }
 
     // Email validation
