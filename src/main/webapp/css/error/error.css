@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.error-container {
+    text-align: center;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.error-container h1 {
+    font-size: 48px;
+    color: #e74c3c;
+    margin-bottom: 20px;
+}
+
+.error-container .message {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.error-container a {
+    text-decoration: none;
+    color: #3498db;
+    font-weight: bold;
+}
+
+.error-container a:hover {
+    text-decoration: underline;
+}
