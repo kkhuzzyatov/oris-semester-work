@@ -15,39 +15,47 @@ public class User {
     private Integer cityId;
     private Integer pointId;
 
-    public static final String ERROR_EMPTY_NAME = "Имя не может быть пустым";
-    public static final String ERROR_INVALID_EMAIL = "Некорректный email: ";
-    public static final String ERROR_INVALID_PHONE = "Некорректный телефон: ";
-    public static final String ERROR_INVALID_PASSWORD = "Некорректный пароль: ";
+    public static final String ERROR_EMPTY_NAME = "Имя не может быть пустым. Оно должно содержать хотя бы один видимый символ.";
+    public static final String ERROR_INVALID_EMAIL = """
+    Некорректный email: %s. Допустимые домены: gmail.com, yandex.ru, mail.ru, list.com. 
+    Email должен состоять только из строчных латинских букв и цифр перед знаком @.
+    """;
+    public static final String ERROR_INVALID_PHONE = """
+    Некорректный телефон: %s. Телефон должен содержать 11 цифр, начинаться с 8 или +7 и не содержать пробелов или других символов.
+    """;
+    public static final String ERROR_INVALID_PASSWORD = "Некорректный пароль: %s. Пароль должен быть не короче 8 символов и может содержать любые символы.";
 
-    // Name validation
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException(ERROR_EMPTY_NAME);
         }
-        this.name = name;
+        this.name = name.trim();
     }
 
-    // Email validation
     public void setEmail(String email) {
         if (email == null || !email.matches("^[a-z0-9]+@(gmail|yandex|mail|list)\\.(com|ru)$")) {
-            throw new IllegalArgumentException(ERROR_INVALID_EMAIL + email);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_EMAIL, email));
         }
-        this.email = email;
+        this.email = email.toLowerCase();
     }
 
-    // Phone validation
     public void setPhone(String phone) {
-        if (phone == null || !phone.matches("^8\\d{10}$")) {
-            throw new IllegalArgumentException(ERROR_INVALID_PHONE + phone);
+        if (phone == null) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_PHONE, phone));
+        }
+        phone = phone.replaceAll("\\s+", "");
+        if (phone.startsWith("+7")) {
+            phone = "8" + phone.substring(2);
+        }
+        if (!phone.matches("^8\\d{10}$")) {
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_PHONE, phone));
         }
         this.phone = phone;
     }
 
-    // Password validation + hashing
     public void setPassword(String password) {
         if (password == null || password.length() < 8) {
-            throw new IllegalArgumentException(ERROR_INVALID_PASSWORD + password);
+            throw new IllegalArgumentException(String.format(ERROR_INVALID_PASSWORD, password));
         }
         this.passwordHash = BCrypt.withDefaults().hashToString(10, password.toCharArray());
     }
@@ -57,4 +65,5 @@ public class User {
         return result.verified;
     }
 }
+
 
