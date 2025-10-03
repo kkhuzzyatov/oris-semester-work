@@ -8,9 +8,7 @@ import ru.orissemesterwork.api.user.model.service.impl.UserServiceImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import ru.orissemesterwork.config.ApplicationConfig;
 import ru.orissemesterwork.config.DatabaseConnectionProvider;
 
@@ -67,7 +65,6 @@ public class UserServlet extends HttpServlet {
             userService.register(dto);
             resp.sendRedirect(req.getContextPath() + "/user?action=login");
         } catch (RuntimeException e) {
-            req.setAttribute("error", e.getMessage());
             req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
         }
     }
@@ -80,7 +77,6 @@ public class UserServlet extends HttpServlet {
             userService.login(email, password);
             resp.sendRedirect(req.getContextPath() + "/home");
         } catch (RuntimeException e) {
-            req.setAttribute("error", e.getMessage());
             req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
         }
     }
