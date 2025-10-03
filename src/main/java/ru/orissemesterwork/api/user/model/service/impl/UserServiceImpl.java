@@ -19,6 +19,10 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userDtoRequest.getEmail()) != null) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует: " + userDtoRequest.getEmail());
         }
+        if (userRepository.findByPhone(userDtoRequest.getPhone()) != null) {
+            throw new IllegalArgumentException("Пользователь с таким phone уже существует: " + userDtoRequest.getPhone());
+        }
+        
         User user = UserMapper.toEntity(userDtoRequest);
         userRepository.save(user);
         return UserMapper.toResponse(user);

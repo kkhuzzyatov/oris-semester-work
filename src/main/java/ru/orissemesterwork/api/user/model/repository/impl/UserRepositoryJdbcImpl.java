@@ -19,13 +19,18 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                 point_id INT
             )
             """;
-
     //language=SQL
     public static final String INSERT_SQL = """
             INSERT INTO users
                 (name, email, phone, password_hash, city_id, point_id)
             VALUES (?, ?, ?, ?, ?, ?)
             """;
+    //language=SQL
+    String SELECT_BY_PHONE_SQL = """
+        SELECT id, name, email, phone, password_hash, city_id, point_id 
+        FROM users 
+        WHERE phone = ?
+    """;
 
     //language=SQL
     public static final String SELECT_BY_EMAIL_SQL = """
@@ -35,6 +40,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     public static final String ERROR_CREATE_USERS_TABLE = "Ошибка при создании таблицы users";
     public static final String ERROR_SAVE_USER = "Ошибка при сохранении пользователя";
     public static final String ERROR_FIND_USER_BY_EMAIL = "Ошибка при поиске пользователя по email";
+    final String ERROR_FIND_USER_BY_PHONE = "Ошибка при поиске пользователя по телефону";
 
     private final DatabaseConnectionProvider databaseConnectionProvider;
 
@@ -101,6 +107,34 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException(ERROR_FIND_USER_BY_EMAIL, e);
+        }
+    }
+
+    @Override
+    public User findByPhone(String phone) {
+        try (Connection conn = databaseConnectionProvider.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_BY_PHONE_SQL)) {
+
+            ps.setString(1, phone);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setCityId(rs.getObject("city_id", Integer.class));
+                    user.setPointId(rs.getObject("point_id", Integer.class));
+                    return user;
+                } else {
+                    return null;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(ERROR_FIND_USER_BY_PHONE, e);
         }
     }
 }
