@@ -61,23 +61,15 @@ public class UserServlet extends HttpServlet {
         dto.setPhone(req.getParameter("phone"));
         dto.setPassword(req.getParameter("password"));
 
-        try {
-            userService.register(dto);
-            resp.sendRedirect(req.getContextPath() + "/user?action=login");
-        } catch (RuntimeException e) {
-            req.getRequestDispatcher(REGISTER_JSP).forward(req, resp);
-        }
+        userService.register(dto);
+        resp.sendRedirect(req.getContextPath() + "/user?action=login");
     }
 
     private void handleLogin(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        try {
-            userService.login(email, password);
-            resp.sendRedirect(req.getContextPath() + "/home");
-        } catch (RuntimeException e) {
-            req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
-        }
+        userService.login(email, password);
+        resp.sendRedirect(req.getContextPath() + "/");
     }
 }
