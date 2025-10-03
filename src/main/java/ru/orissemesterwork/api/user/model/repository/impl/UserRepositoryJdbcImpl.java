@@ -14,28 +14,28 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                 surname VARCHAR(255),
                 name VARCHAR(255) NOT NULL,
                 patronymic VARCHAR(255),
-                email VARCHAR(255) NOT NULL UNIQUE,
-                phone VARCHAR(11) UNIQUE,
-                passwordHash VARCHAR(255) NOT NULL
+                email VARCHAR(255) UNIQUE NOT NULL,
+                phone VARCHAR(11) UNIQUE NOT NULL,
+                password_hash VARCHAR(255) NOT NULL,
+                city_id INT,
+                point_id INT,
+                gender VARCHAR(10) CHECK (gender IN ('male','female'))
             )
             """;
 
     //language=SQL
     public static final String INSERT_SQL = """
             INSERT INTO users
-                (surname, name, patronymic, email, phone, passwordHash)
-            VALUES (?, ?, ?, ?, ?, ?)
+                (surname, name, patronymic, email, phone, password_hash, city_id, point_id, gender)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     //language=SQL
     public static final String SELECT_BY_EMAIL_SQL = """
-            SELECT 
-                id, surname, name, patronymic, email, phone, passwordHash
-            FROM users 
-            WHERE email = ?
+            SELECT * FROM users WHERE email = ?
             """;
 
-    public static final String ERROR_CREATE_USERS_TABLE = "Не удалось создать таблицу users";
+    public static final String ERROR_CREATE_USERS_TABLE = "Ошибка при создании таблицы users";
     public static final String ERROR_SAVE_USER = "Ошибка при сохранении пользователя";
     public static final String ERROR_FIND_USER_BY_EMAIL = "Ошибка при поиске пользователя по email";
 
@@ -65,6 +65,9 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             ps.setString(4, user.getEmail());
             ps.setString(5, user.getPhone());
             ps.setString(6, user.getPasswordHash());
+            ps.setObject(7, user.getCityId(), Types.INTEGER);
+            ps.setObject(8, user.getPointId(), Types.INTEGER);
+            ps.setString(9, user.getGender());
 
             ps.executeUpdate();
 
@@ -94,13 +97,11 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                     user.setName(rs.getString("name"));
                     user.setPatronymic(rs.getString("patronymic"));
                     user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
                     user.setPasswordHash(rs.getString("passwordHash"));
-
-                    String phone = rs.getString("phone");
-                    if (phone != null) {
-                        user.setPhone(phone);
-                    }
-
+                    user.setCityId(rs.getObject("city_id", Integer.class));
+                    user.setPointId(rs.getObject("point_id", Integer.class));
+                    user.setGender(rs.getString("gender"));
                     return user;
                 } else {
                     return null;

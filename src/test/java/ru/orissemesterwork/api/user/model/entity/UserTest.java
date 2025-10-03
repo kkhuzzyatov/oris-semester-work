@@ -1,8 +1,6 @@
 package ru.orissemesterwork.api.user.model.entity;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import ru.orissemesterwork.api.user.model.entity.User;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,11 +12,12 @@ class UserTest {
     private static final String USER_EMAIL = "test@gmail.com";
     private static final String USER_PHONE = "89874146494";
     private static final String USER_PASSWORD = "StrongPass123";
+    private static final Integer USER_CITY_ID = 1;
+    private static final Integer USER_POINT_ID = 1;
 
-    // Builder & Getters
     @Test
     @DisplayName("Проверка установки id")
-    void testBuilder_Id() {
+    void testSetId() {
         User user = new User();
         user.setId(USER_ID);
         assertEquals(USER_ID, user.getId());
@@ -26,7 +25,7 @@ class UserTest {
 
     @Test
     @DisplayName("Проверка установки фамилии")
-    void testBuilder_Surname() {
+    void testSetSurname() {
         User user = new User();
         user.setSurname(USER_SURNAME);
         assertEquals(USER_SURNAME, user.getSurname());
@@ -34,15 +33,31 @@ class UserTest {
 
     @Test
     @DisplayName("Проверка установки имени")
-    void testBuilder_Name() {
+    void testSetName() {
         User user = new User();
         user.setName(USER_NAME);
         assertEquals(USER_NAME, user.getName());
     }
 
     @Test
+    @DisplayName("Невозможно установить пустое имя")
+    void testSetNameEmpty() {
+        User user = new User();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> user.setName(""));
+        assertTrue(exception.getMessage().contains(User.ERROR_EMPTY_NAME));
+    }
+
+    @Test
+    @DisplayName("Невозможно установить имя из пробелов")
+    void testSetNameBlank() {
+        User user = new User();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> user.setName("   "));
+        assertTrue(exception.getMessage().contains(User.ERROR_EMPTY_NAME));
+    }
+
+    @Test
     @DisplayName("Проверка установки отчества")
-    void testBuilder_Patronymic() {
+    void testSetPatronymic() {
         User user = new User();
         user.setPatronymic(USER_PATRONYMIC);
         assertEquals(USER_PATRONYMIC, user.getPatronymic());
@@ -50,47 +65,7 @@ class UserTest {
 
     @Test
     @DisplayName("Проверка установки email")
-    void testBuilder_Email() {
-        User user = new User();
-        user.setEmail(USER_EMAIL);
-        assertEquals(USER_EMAIL, user.getEmail());
-    }
-
-    @Test
-    @DisplayName("Проверка установки телефона")
-    void testBuilder_Phone() {
-        User user = new User();
-        user.setPhone(USER_PHONE);
-        assertEquals(USER_PHONE, user.getPhone());
-    }
-
-    // Email validation
-    @Test
-    @DisplayName("Невозможно установить пустое имя")
-    void testInvalidName_Empty() {
-        User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setName(""));
-    }
-
-    @Test
-    @DisplayName("Невозможно установить имя из пробелов")
-    void testInvalidName_Blank() {
-        User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setName("   "));
-    }
-
-    @Test
-    @DisplayName("Имя устанавливается корректно, если не пустое")
-    void testValidName() {
-        User user = new User();
-        user.setName(USER_NAME);
-        assertEquals(USER_NAME, user.getName());
-    }
-
-    // Email validation
-    @Test
-    @DisplayName("Валидный email сохраняется корректно")
-    void testValidEmail() {
+    void testSetEmail() {
         User user = new User();
         user.setEmail(USER_EMAIL);
         assertEquals(USER_EMAIL, user.getEmail());
@@ -98,29 +73,34 @@ class UserTest {
 
     @Test
     @DisplayName("Невалидный email без @ выбрасывает исключение")
-    void testInvalidEmail_NoAt() {
+    void testInvalidEmailNoAt() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setEmail("usergmail.com"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setEmail("usergmail.com"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
     }
 
     @Test
     @DisplayName("Невалидный email с неподдерживаемым доменом выбрасывает исключение")
-    void testInvalidEmail_UnsupportedDomain() {
+    void testInvalidEmailUnsupportedDomain() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setEmail("user@yahoo.com"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setEmail("user@yahoo.com"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
     }
 
     @Test
     @DisplayName("Невалидный email без доменной зоны выбрасывает исключение")
-    void testInvalidEmail_NoTld() {
+    void testInvalidEmailNoTld() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setEmail("user@gmail"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setEmail("user@gmail"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
     }
 
-    // Phone validation
     @Test
-    @DisplayName("Валидный телефон сохраняется корректно")
-    void testValidPhone() {
+    @DisplayName("Проверка установки телефона")
+    void testSetPhone() {
         User user = new User();
         user.setPhone(USER_PHONE);
         assertEquals(USER_PHONE, user.getPhone());
@@ -128,22 +108,25 @@ class UserTest {
 
     @Test
     @DisplayName("Невалидный телефон (короткий) выбрасывает исключение")
-    void testInvalidPhone_Short() {
+    void testInvalidPhoneShort() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setPhone("8999123"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setPhone("8999123"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PHONE));
     }
 
     @Test
-    @DisplayName("Невалидный телефон (начинается не с 8) выбрасывает исключение")
-    void testInvalidPhone_NotStartsWith8() {
+    @DisplayName("Невалидный телефон (не начинается с 8) выбрасывает исключение")
+    void testInvalidPhoneNotStartsWith8() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setPhone("79991234567"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setPhone("79991234567"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PHONE));
     }
 
-    // Password validation
     @Test
     @DisplayName("Валидный пароль хэшируется")
-    void testValidPasswordHashing() {
+    void testPasswordHashing() {
         User user = new User();
         user.setPassword(USER_PASSWORD);
         assertNotNull(user.getPasswordHash());
@@ -151,24 +134,67 @@ class UserTest {
 
     @Test
     @DisplayName("Слишком короткий пароль выбрасывает исключение")
-    void testInvalidPassword_Short() {
+    void testInvalidPasswordShort() {
         User user = new User();
-        assertThrows(IllegalArgumentException.class, () -> user.setPassword("123"));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setPassword("123"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PASSWORD));
     }
 
     @Test
-    @DisplayName("Метод checkPassword возвращает true для правильного пароля")
-    void testCheckPassword_Valid() {
+    @DisplayName("checkPassword возвращает true для правильного пароля")
+    void testCheckPasswordValid() {
         User user = new User();
         user.setPassword(USER_PASSWORD);
         assertTrue(user.checkPassword(USER_PASSWORD));
     }
 
     @Test
-    @DisplayName("Метод checkPassword возвращает false для неверного пароля")
-    void testCheckPassword_Invalid() {
+    @DisplayName("checkPassword возвращает false для неправильного пароля")
+    void testCheckPasswordInvalid() {
         User user = new User();
         user.setPassword(USER_PASSWORD);
         assertFalse(user.checkPassword("WrongPass123"));
+    }
+
+    @Test
+    @DisplayName("Проверка установки cityId")
+    void testSetCityId() {
+        User user = new User();
+        user.setCityId(USER_CITY_ID);
+        assertEquals(USER_CITY_ID, user.getCityId());
+    }
+
+    @Test
+    @DisplayName("Проверка установки pointId")
+    void testSetPointId() {
+        User user = new User();
+        user.setPointId(USER_POINT_ID);
+        assertEquals(USER_POINT_ID, user.getPointId());
+    }
+
+    @Test
+    @DisplayName("Проверка установки пола male")
+    void testSetGenderMale() {
+        User user = new User();
+        user.setGender(User.GENDER_MALE);
+        assertEquals(User.GENDER_MALE, user.getGender());
+    }
+
+    @Test
+    @DisplayName("Проверка установки пола female")
+    void testSetGenderFemale() {
+        User user = new User();
+        user.setGender(User.GENDER_FEMALE);
+        assertEquals(User.GENDER_FEMALE, user.getGender());
+    }
+
+    @Test
+    @DisplayName("Установка некорректного пола выбрасывает исключение")
+    void testSetGenderInvalid() {
+        User user = new User();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> user.setGender("other"));
+        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_GENDER));
     }
 }

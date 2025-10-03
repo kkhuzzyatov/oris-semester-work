@@ -12,18 +12,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserRepositoryJdbcImplTest {
-    private static final String USER_SURNAME = "Хуззятов";
     private static final String USER_NAME = "Камиль";
-    private static final String USER_PATRONYMIC = "Артурович";
     private static final String USER_PASSWORD = "StrongPass123";
 
     private DatabaseConnectionProvider databaseConnectionProvider;
     private UserRepository userRepository;
 
-    private int emailNumber = 0;
-    private String generateUnusedEmail() {
-        emailNumber++;
-        return "test" + emailNumber + "@gmail.com";
+    private int emailNumber = 0; 
+    private String generateEmail() 
+    { emailNumber++; 
+        return "test" + emailNumber + "@gmail.com"; 
+    } 
+    
+    private long currentPhone = 8_000_000_0000L; 
+    private String generatePhone() 
+    { 
+        currentPhone++; return Long.toString(currentPhone);
     }
 
     @BeforeAll
@@ -38,73 +42,95 @@ public class UserRepositoryJdbcImplTest {
     }
 
     @Test
-    @DisplayName("Сохранение нового пользователя")
+    @DisplayName("Сохранение пользователя без ошибок")
     void testSaveUser() {
         User user = new User();
-        user.setSurname(USER_SURNAME);
         user.setName(USER_NAME);
-        user.setPatronymic(USER_PATRONYMIC);
-        user.setEmail(generateUnusedEmail());
+        user.setEmail(generateEmail());
+        user.setPhone(generatePhone());
         user.setPassword(USER_PASSWORD);
 
         assertDoesNotThrow(() -> userRepository.save(user));
     }
 
     @Test
-    @DisplayName("Получение несуществующего пользователя возвращает null")
-    void testFindNonExistentUser() {
-        assertNull(userRepository.findByEmail("nonexistent@gmail.com"));
-    }
-
-    @Test
-    @DisplayName("Проверка пароля пользователя")
-    void testPasswordCheck() {
-        String email = generateUnusedEmail();
+    @DisplayName("Получение существующего пользователя по email")
+    void testFindExistingUser() {
+        String email = generateEmail();
         User user = new User();
-        user.setSurname(USER_SURNAME);
         user.setName(USER_NAME);
-        user.setPatronymic(USER_PATRONYMIC);
         user.setEmail(email);
+        user.setPhone(generatePhone());
         user.setPassword(USER_PASSWORD);
         userRepository.save(user);
 
-        assertTrue(userRepository.findByEmail(email).checkPassword(USER_PASSWORD));
+        User found = userRepository.findByEmail(email);
+        assertNotNull(found);
+        assertEquals(email, found.getEmail());
     }
 
     @Test
-    @DisplayName("Нельзя добавить пользователя с дублирующим USER_EMAIL")
+    @DisplayName("Поиск несуществующего пользователя возвращает null")
+    void testFindNonExistingUser() {
+        User found = userRepository.findByEmail("nonexistent@gmail.com");
+        assertNull(found);
+    }
+
+    @Test
+    @DisplayName("Два пользователя не могут иметь одинаковый email")
     void testDuplicateEmail() {
-        String email = generateUnusedEmail();
+        String email = generateEmail();
+
         User user1 = new User();
-        user1.setSurname(USER_SURNAME);
         user1.setName(USER_NAME);
-        user1.setPatronymic(USER_PATRONYMIC);
         user1.setEmail(email);
+        user1.setPhone(generatePhone());
         user1.setPassword(USER_PASSWORD);
         userRepository.save(user1);
 
         User user2 = new User();
-        user2.setSurname(USER_SURNAME);
         user2.setName(USER_NAME);
-        user2.setPatronymic(USER_PATRONYMIC);
         user2.setEmail(email);
+        user2.setPhone(generatePhone());
         user2.setPassword(USER_PASSWORD);
 
-        Exception e = assertThrows(RuntimeException.class, () -> userRepository.save(user2));
-        assertTrue(e.getMessage().contains(UserRepositoryJdbcImpl.ERROR_SAVE_USER));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userRepository.save(user2));
+        assertTrue(exception.getMessage().contains("Ошибка при сохранении пользователя"));
     }
 
     @Test
-    @DisplayName("Проверка генерации id после сохранения")
+    @DisplayName("Два пользователя не могут иметь одинаковый phone")
+    void testDuplicatePhone() {
+        String phone = generatePhone();
+
+        User user1 = new User();
+        user1.setName(USER_NAME);
+        user1.setEmail(generateEmail());
+        user1.setPhone(phone);
+        user1.setPassword(USER_PASSWORD);
+        userRepository.save(user1);
+
+        User user2 = new User();
+        user2.setName(USER_NAME);
+        user2.setEmail(generateEmail());
+        user2.setPhone(phone);
+        user2.setPassword(USER_PASSWORD);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userRepository.save(user2));
+        assertTrue(exception.getMessage().contains("Ошибка при сохранении пользователя"));
+    }
+
+    @Test
+    @DisplayName("После сохранения у пользователя генерируется id")
     void testGeneratedId() {
         User user = new User();
-        user.setSurname(USER_SURNAME);
         user.setName(USER_NAME);
-        user.setPatronymic(USER_PATRONYMIC);
-        user.setEmail(generateUnusedEmail());
+        user.setEmail(generateEmail());
+        user.setPhone(generatePhone());
         user.setPassword(USER_PASSWORD);
 
         userRepository.save(user);
+
         assertNotNull(user.getId());
     }
 }

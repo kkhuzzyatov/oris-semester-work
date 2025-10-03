@@ -14,11 +14,18 @@ public class User {
     private String email;
     private String phone;
     private String passwordHash;
+    private Integer cityId;
+    private Integer pointId;
+    private String gender;
+    
+    public static final String GENDER_MALE = "male";
+    public static final String GENDER_FEMALE = "female";
 
     public static final String ERROR_EMPTY_NAME = "Имя не может быть пустым";
     public static final String ERROR_INVALID_EMAIL = "Некорректный email: ";
     public static final String ERROR_INVALID_PHONE = "Некорректный телефон: ";
     public static final String ERROR_INVALID_PASSWORD = "Некорректный пароль: ";
+    public static final String ERROR_INVALID_GENDER = "Некорректный пол: ";
 
     // Name validation
     public void setName(String name) {
@@ -55,6 +62,13 @@ public class User {
     public boolean checkPassword(String password) {
         BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), this.passwordHash);
         return result.verified;
+    }
+
+    public void setGender(String gender) {
+        if (gender == null || !(gender.equalsIgnoreCase(GENDER_MALE) || gender.equalsIgnoreCase(GENDER_FEMALE))) {
+            throw new IllegalArgumentException(ERROR_INVALID_GENDER + gender);
+        }
+        this.gender = gender.toLowerCase();
     }
 }
 
