@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
     private static final Integer USER_ID = 1;
-    private static final String USER_SURNAME = "Хуззятов";
     private static final String USER_NAME = "Камиль";
-    private static final String USER_PATRONYMIC = "Артурович";
     private static final String USER_EMAIL = "test@gmail.com";
     private static final String USER_PHONE = "89874146494";
     private static final String USER_PASSWORD = "StrongPass123";
@@ -21,14 +19,6 @@ class UserTest {
         User user = new User();
         user.setId(USER_ID);
         assertEquals(USER_ID, user.getId());
-    }
-
-    @Test
-    @DisplayName("Проверка установки фамилии")
-    void testSetSurname() {
-        User user = new User();
-        user.setSurname(USER_SURNAME);
-        assertEquals(USER_SURNAME, user.getSurname());
     }
 
     @Test
@@ -53,14 +43,6 @@ class UserTest {
         User user = new User();
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> user.setName("   "));
         assertTrue(exception.getMessage().contains(User.ERROR_EMPTY_NAME));
-    }
-
-    @Test
-    @DisplayName("Проверка установки отчества")
-    void testSetPatronymic() {
-        User user = new User();
-        user.setPatronymic(USER_PATRONYMIC);
-        assertEquals(USER_PATRONYMIC, user.getPatronymic());
     }
 
     @Test
@@ -171,30 +153,5 @@ class UserTest {
         User user = new User();
         user.setPointId(USER_POINT_ID);
         assertEquals(USER_POINT_ID, user.getPointId());
-    }
-
-    @Test
-    @DisplayName("Проверка установки пола male")
-    void testSetGenderMale() {
-        User user = new User();
-        user.setGender(User.GENDER_MALE);
-        assertEquals(User.GENDER_MALE, user.getGender());
-    }
-
-    @Test
-    @DisplayName("Проверка установки пола female")
-    void testSetGenderFemale() {
-        User user = new User();
-        user.setGender(User.GENDER_FEMALE);
-        assertEquals(User.GENDER_FEMALE, user.getGender());
-    }
-
-    @Test
-    @DisplayName("Установка некорректного пола выбрасывает исключение")
-    void testSetGenderInvalid() {
-        User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setGender("other"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_GENDER));
     }
 }

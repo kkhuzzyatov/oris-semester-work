@@ -18,21 +18,21 @@ public class UserRepositoryJdbcImplTest {
     private DatabaseConnectionProvider databaseConnectionProvider;
     private UserRepository userRepository;
 
-    private int emailNumber = 0; 
-    private String generateEmail() 
-    { emailNumber++; 
-        return "test" + emailNumber + "@gmail.com"; 
-    } 
-    
-    private long currentPhone = 8_000_000_0000L; 
-    private String generatePhone() 
-    { 
+    private int emailNumber = 0;
+    private String generateEmail()
+    { emailNumber++;
+        return "test" + emailNumber + "@gmail.com";
+    }
+
+    private long currentPhone = 8_000_000_0000L;
+    private String generatePhone()
+    {
         currentPhone++; return Long.toString(currentPhone);
     }
 
     @BeforeAll
     void setupDatabase() {
-        databaseConnectionProvider = ApplicationConfig.getTestDatabaseConnectionProvider();
+        databaseConnectionProvider = ApplicationConfig.generateTestDatabaseConnectionProvider();
         userRepository = new UserRepositoryJdbcImpl(databaseConnectionProvider);
     }
 
