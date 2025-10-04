@@ -43,10 +43,7 @@ public class User {
         if (phone == null) {
             throw new IllegalArgumentException(String.format(ERROR_INVALID_PHONE, phone));
         }
-        phone = phone.replaceAll("\\s+", "");
-        if (phone.startsWith("+7")) {
-            phone = "8" + phone.substring(2);
-        }
+
         if (!phone.matches("^8\\d{10}$")) {
             throw new IllegalArgumentException(String.format(ERROR_INVALID_PHONE, phone));
         }

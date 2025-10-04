@@ -16,6 +16,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDtoResponse register(UserDtoRequest userDtoRequest) {
+        String phone = userDtoRequest.getPhone();
+        if (phone.startsWith("+7")) {
+            phone = "8" + phone.substring(2);
+        }
+        userDtoRequest.setPhone(phone);
+
         if (userRepository.findByEmail(userDtoRequest.getEmail()) != null) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует: " + userDtoRequest.getEmail());
         }
