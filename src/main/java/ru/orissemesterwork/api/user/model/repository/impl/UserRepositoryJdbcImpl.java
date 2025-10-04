@@ -13,7 +13,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) UNIQUE NOT NULL,
-                phone VARCHAR(11) UNIQUE NOT NULL,
+                phone VARCHAR(11) UNIQUE,
                 password_hash VARCHAR(255) NOT NULL,
                 city_id INT,
                 point_id INT

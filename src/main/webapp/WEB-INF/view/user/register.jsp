@@ -18,7 +18,7 @@
         <input type="email" id="email" name="email" placeholder="Введите email" required>
 
         <label for="phone">Телефон</label>
-        <input type="tel" id="phone" name="phone" placeholder="Введите телефон" required>
+        <input type="tel" id="phone" name="phone" placeholder="Введите телефон">
 
         <label for="password">Пароль</label>
         <div class="password-container">
