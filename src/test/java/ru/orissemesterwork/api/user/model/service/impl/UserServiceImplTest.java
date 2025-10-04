@@ -73,6 +73,16 @@ class UserServiceImplTest {
     }
 
     @Test
+    @DisplayName("Регистрация с существующим телефоном выбрасывает исключение")
+    void testRegisterPhoneAlreadyExists() {
+        User existingUser = new User();
+        existingUser.setPhone(USER_PHONE);
+        when(userRepository.findByPhone(USER_PHONE)).thenReturn(existingUser);
+
+        assertThrows(IllegalArgumentException.class, () -> userService.register(buildRequest()));
+    }
+
+    @Test
     @DisplayName("Успешный логин возвращает корректного пользователя")
     void testLogin() {
         User user = new User();

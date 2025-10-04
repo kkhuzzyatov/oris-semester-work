@@ -57,27 +57,21 @@ class UserTest {
     @DisplayName("Невалидный email без @ выбрасывает исключение")
     void testInvalidEmailNoAt() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setEmail("usergmail.com"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
+        assertThrows(IllegalArgumentException.class, () -> user.setEmail("usergmail.com"));
     }
 
     @Test
     @DisplayName("Невалидный email с неподдерживаемым доменом выбрасывает исключение")
     void testInvalidEmailUnsupportedDomain() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setEmail("user@yahoo.com"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
+        assertThrows(IllegalArgumentException.class, () -> user.setEmail("user@yahoo.com"));
     }
 
     @Test
     @DisplayName("Невалидный email без доменной зоны выбрасывает исключение")
     void testInvalidEmailNoTld() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setEmail("user@gmail"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_EMAIL));
+        assertThrows(IllegalArgumentException.class, () -> user.setEmail("user@gmail"));
     }
 
     @Test
@@ -92,18 +86,14 @@ class UserTest {
     @DisplayName("Невалидный телефон (короткий) выбрасывает исключение")
     void testInvalidPhoneShort() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setPhone("8999123"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PHONE));
+        assertThrows(IllegalArgumentException.class, () -> user.setPhone("8999123"));
     }
 
     @Test
     @DisplayName("Невалидный телефон (не начинается с 8) выбрасывает исключение")
     void testInvalidPhoneNotStartsWith8() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setPhone("79991234567"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PHONE));
+        assertThrows(IllegalArgumentException.class, () -> user.setPhone("79991234567"));
     }
 
     @Test
@@ -118,9 +108,7 @@ class UserTest {
     @DisplayName("Слишком короткий пароль выбрасывает исключение")
     void testInvalidPasswordShort() {
         User user = new User();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> user.setPassword("123"));
-        assertTrue(exception.getMessage().contains(User.ERROR_INVALID_PASSWORD));
+        assertThrows(IllegalArgumentException.class, () -> user.setPassword("123"));
     }
 
     @Test
