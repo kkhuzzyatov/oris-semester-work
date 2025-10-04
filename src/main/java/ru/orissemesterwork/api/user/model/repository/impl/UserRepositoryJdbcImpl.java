@@ -26,6 +26,12 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             VALUES (?, ?, ?, ?, ?, ?)
             """;
     //language=SQL
+    String SELECT_BY_ID_SQL = """
+        SELECT id, name, email, phone, password_hash, city_id, point_id 
+        FROM users 
+        WHERE id = ?
+    """;
+    //language=SQL
     String SELECT_BY_PHONE_SQL = """
         SELECT id, name, email, phone, password_hash, city_id, point_id 
         FROM users 
@@ -83,10 +89,35 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     }
 
     @Override
+    public User findById(Integer id) {
+        try (Connection conn = databaseConnectionProvider.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SELECT_BY_ID_SQL)) {
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setId(rs.getInt("id"));
+                    user.setName(rs.getString("name"));
+                    user.setEmail(rs.getString("email"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setPasswordHash(rs.getString("password_hash"));
+                    user.setCityId(rs.getObject("city_id", Integer.class));
+                    user.setPointId(rs.getObject("point_id", Integer.class));
+                    return user;
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(ERROR_FIND_USER_BY_PHONE, e);
+        }
+    }
+
+    @Override
     public User findByEmail(String email) {
         try (Connection conn = databaseConnectionProvider.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_BY_EMAIL_SQL)) {
-
             ps.setString(1, email);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -104,7 +135,6 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                     return null;
                 }
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(ERROR_FIND_USER_BY_EMAIL, e);
         }
@@ -114,7 +144,6 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     public User findByPhone(String phone) {
         try (Connection conn = databaseConnectionProvider.getConnection();
              PreparedStatement ps = conn.prepareStatement(SELECT_BY_PHONE_SQL)) {
-
             ps.setString(1, phone);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -132,7 +161,6 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                     return null;
                 }
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(ERROR_FIND_USER_BY_PHONE, e);
         }

@@ -55,7 +55,7 @@ public class UserRepositoryJdbcImplTest {
 
     @Test
     @DisplayName("Получение существующего пользователя по email")
-    void testFindExistingUser() {
+    void testFindExistingUserByEmail() {
         String email = generateEmail();
         User user = new User();
         user.setName(USER_NAME);
@@ -70,9 +70,32 @@ public class UserRepositoryJdbcImplTest {
     }
 
     @Test
-    @DisplayName("Поиск несуществующего пользователя возвращает null")
-    void testFindNonExistingUser() {
+    @DisplayName("Получение существующего пользователя по phone")
+    void testFindExistingUserByPhone() {
+        String phone = generatePhone();
+        User user = new User();
+        user.setName(USER_NAME);
+        user.setEmail(generateEmail());
+        user.setPhone(phone);
+        user.setPassword(USER_PASSWORD);
+        userRepository.save(user);
+
+        User found = userRepository.findByPhone(phone);
+        assertNotNull(found);
+        assertEquals(phone, found.getPhone());
+    }
+
+    @Test
+    @DisplayName("Поиск по email несуществующего пользователя возвращает null")
+    void testFindByEmailNonExistingUser() {
         User found = userRepository.findByEmail("nonexistent@gmail.com");
+        assertNull(found);
+    }
+
+    @Test
+    @DisplayName("Поиск по phone несуществующего пользователя возвращает null")
+    void testFindByPhoneNonExistingUser() {
+        User found = userRepository.findByPhone("80123456789");
         assertNull(found);
     }
 
