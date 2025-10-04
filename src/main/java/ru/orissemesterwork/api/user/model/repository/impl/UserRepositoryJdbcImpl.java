@@ -45,6 +45,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     public static final String ERROR_CREATE_USERS_TABLE = "Ошибка при создании таблицы users";
     public static final String ERROR_SAVE_USER = "Ошибка при сохранении пользователя";
+    public static final String ERROR_FIND_USER_BY_ID = "Ошибка при поиске пользователя по id";
     public static final String ERROR_FIND_USER_BY_EMAIL = "Ошибка при поиске пользователя по email";
     final String ERROR_FIND_USER_BY_PHONE = "Ошибка при поиске пользователя по телефону";
 
@@ -110,7 +111,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(ERROR_FIND_USER_BY_PHONE, e);
+            throw new RuntimeException(ERROR_FIND_USER_BY_ID, e);
         }
     }
 
