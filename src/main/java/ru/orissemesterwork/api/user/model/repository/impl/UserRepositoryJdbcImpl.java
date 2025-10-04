@@ -65,7 +65,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public Integer save(User user) {
         try (Connection conn = databaseConnectionProvider.getConnection();
              PreparedStatement ps = conn.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -81,6 +81,9 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     user.setId(generatedKeys.getInt(1));
+                    return generatedKeys.getInt(1);
+                } else {
+                    return null;
                 }
             }
 

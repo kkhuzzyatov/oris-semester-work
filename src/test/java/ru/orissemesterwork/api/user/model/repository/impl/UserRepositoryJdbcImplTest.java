@@ -54,6 +54,21 @@ public class UserRepositoryJdbcImplTest {
     }
 
     @Test
+    @DisplayName("Получение существующего пользователя по id")
+    void testFindExistingUserById() {
+        User user = new User();
+        user.setName(USER_NAME);
+        user.setEmail(generateEmail());
+        user.setPhone(generatePhone());
+        user.setPassword(USER_PASSWORD);
+        Integer id = userRepository.save(user);
+
+        User found = userRepository.findById(id);
+        assertNotNull(found);
+        assertEquals(id, found.getId());
+    }
+
+    @Test
     @DisplayName("Получение существующего пользователя по email")
     void testFindExistingUserByEmail() {
         String email = generateEmail();
